@@ -6,6 +6,28 @@ class Extras(object):
     def __init__(self, netbox_con):
         self.netbox_con = netbox_con
 
+    def get_custom_fields(self, **kwargs):
+        """Returns all custom-fields"""
+        return self.netbox_con.get('/extras/custom-fields/', **kwargs)
+
+    def create_custom_fields(self, name, content_types, **kwargs):
+        """Create a custom-fields
+
+        :param name: custom-fields name
+        :param content_types: xxx
+        :param kwargs: optional fields
+        :return netbox object if successful otherwise exception raised
+        """
+        required_fields = {"name": name, "content_types": content_types}
+        return self.netbox_con.post('/extras/custom-fields/', required_fields, **kwargs)
+
+    def delete_custom_fields_by_id(self, custom_fields_id):
+        """Delete custom-fields
+        :param custom_field_id: custom-fields to delete
+        :return bool True if successful otherwise delete exception
+        """
+        return self.netbox_con.delete('/extras/custom-fields/', custom_fields_id)
+
     def get_config_contexts(self, **kwargs):
         """Returns all config-contexts"""
         return self.netbox_con.get('/extras/config-contexts/', **kwargs)
