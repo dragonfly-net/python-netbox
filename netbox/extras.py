@@ -13,7 +13,7 @@ class Extras(object):
     def create_custom_fields(self, name, content_types, **kwargs):
         """Create a custom-fields
 
-        :param name: custom-fields name
+        :param name: custom field name
         :param content_types: xxx
         :param kwargs: optional fields
         :return netbox object if successful otherwise exception raised
@@ -27,6 +27,19 @@ class Extras(object):
         :return bool True if successful otherwise delete exception
         """
         return self.netbox_con.delete('/extras/custom-fields/', custom_fields_id)
+
+    def update_custom_fields(self, name, content_types, **kwargs):
+        """Update custom-fields
+        :param name: custom-fields name
+        :param content_types: xx
+        :return
+        """
+        try:
+            custom_fields_id = self.get_custom_fields(name=name)[0]['id']
+        except IndexError:
+            raise exceptions.NotFoundException({"detail": "custom-fields: {}".format(name)}) from None
+
+        return self.netbox_con.patch('/extras/custom-fields/', custom_fields_id, **kwargs)
 
     def get_config_contexts(self, **kwargs):
         """Returns all config-contexts"""
