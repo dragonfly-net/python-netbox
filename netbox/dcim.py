@@ -70,6 +70,63 @@ class Dcim(object):
         """
         return self.netbox_con.patch('/dcim/regions/', region_id, **kwargs)
 
+    def get_site_groups(self, **kwargs):
+        """Returns all available site groups"""
+        return self.netbox_con.get('/dcim/site-groups/', **kwargs)
+
+    def create_site_groups(self, name, slug, **kwargs):
+        """Create a new site group
+
+        :param name: Site name
+        :param slug: slug name
+        :param kwargs: optional fields
+        :return: netbox object if successful otherwise exception raised
+        """
+        required_fields = {"name": name, "slug": slug}
+        return self.netbox_con.post('/dcim/site-groups/', required_fields, **kwargs)
+
+    def delete_site_groups(self, site_groups_name):
+        """Delete site group
+
+        :param site_groups_name: Site group to delete
+        :return: bool True if succesful otherwase delete exception
+        """
+        try:
+            site_groups_id = self.get_site_groups(name=site_groups_name)[0]['id']
+        except IndexError:
+            raise exceptions.NotFoundException({"detail": "site_group: {}".format(site_groups_name)}) from None
+        return self.netbox_con.delete('/dcim/site-groups/', site_groups_id)
+
+    def delete_site_groups_by_id(self, site_groups_id):
+        """Delete site group dy id
+
+        :param site_groups_id: Site group to delete
+        :return: bool True if succesful otherwase raise exception
+        """
+        return self.netbox_con.delete('/dcim/site-groups/', site_groups_id)
+
+    def update_site_groups(self, site_groups_name, **kwargs):
+        """
+
+        :param site_groups_name: Site to update
+        :param kwargs: requests body dict
+        :return: bool True if successful otherwise raise UpdateException
+        """
+        try:
+            site_groups_id = self.get_site_groups(name=site_groups_name)[0]['id']
+        except IndexError:
+            raise exceptions.NotFoundException({"detail": "site-groups: {}".format(site_groups_name)}) from None
+        return self.netbox_con.patch('/dcim/site-groups/', site_groups_id, **kwargs)
+
+    def update_site_groups_by_id(self, site_groups_id, **kwargs):
+        """Update a site group by id
+
+        :param site_groups_id: Site to update
+        :param kwargs: requests body dict
+        :return: bool True if successful otherwise raise Exception
+        """
+        return self.netbox_con.patch('/dcim/site-groups/', site_groups_id, **kwargs)
+
     def get_sites(self, **kwargs):
         """Returns all available sites"""
         return self.netbox_con.get('/dcim/sites/', **kwargs)
